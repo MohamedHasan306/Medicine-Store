@@ -20,35 +20,66 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+     //                   The Unprotected Route
 
-Route::get('/medicines',[MedicineController::class,'index']);
-Route::get('/medicines/{id_medicine}',[MedicineController::class,'show_medicine']);
-Route::get('/medicines/category/{id_category}',[MedicineController::class,'show']);
-Route::post('/register',[AuthController::class,'register']);
-Route::post('/login',[AuthController::class,'login']);
-Route::get('/medicines/search/{name}',[MedicineController::class,'search']);
-Route::get('/category/search/{name}',[CategoryController::class,'search']);
-Route::get('/expirationdate/{id}',[ExpirationdateController::class,'quantity']);
-
-
-Route::group(['middleware'=>['auth:sanctum']], function () {
-    Route::post('/logout',[AuthController::class,'logout']);
-    Route::post('/category',[CategoryController::class,'create']);
-    Route::post('/medicines',[MedicineController::class,'create']);
-    Route::post('/expirationdate',[ExpirationdateController::class,'create']);
-    Route::post('/medicines/{id_medicine}',[MedicineController::class,'update']);
-    Route::delete('/medicines/{id_medicine}',[MedicineController::class,'destroy']);
-    Route::delete('/category/{id_category}',[CategoryController::class,'destroy']);
-    Route::post('/category/{id}',[CategoryController::class,'update']);
-
+ // Medicine
+Route::controller(MedicineController::class)->prefix('medicine')->group(function (){
+    Route::get('/','index');
+    Route::get('/{id_medicine}','show_medicine');
+    Route::get('/category/{id_category}','show');
+    Route::get('/search/{name}','search');
 });
 
-Route::post('/order',[OrderController::class,'create']);
+
+ // Category
+Route::controller(CategoryController::class)->prefix('category')->group(function (){
+    Route::get('/search/{name}','search');
+});
+
+
+ // Login & Register
+Route::controller(AuthController::class)->group(function (){
+    Route::post('/register','register');
+    Route::post('/login','login');
+});
+
+
+ // Quantity
+Route::controller(ExpirationdateController::class)->group(function (){
+    Route::get('/{id}','quantity');
+});
 
 
 
 
+       //                           The Protected Route
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+
+  //Medicine
+Route::controller(MedicineController::class)->middleware('auth:sanctum')->prefix('medicine')->group(function (){
+    Route::post('/','create');
+    Route::post('/{id_medicine}','update');
+    Route::delete('/{id_medicine}','destroy');
+});
+
+ //category
+Route::controller(CategoryController::class)->middleware('auth:sanctum')->prefix('category')->group(function (){
+    Route::post('/','create');
+    Route::post('/{id_category}','update');
+    Route::delete('/id_category}','destroy');
+});
+
+  //Expiration_Date
+Route::controller(ExpirationdateController::class)->middleware('auth:sanctum')->prefix('expirationdate')->group(function (){
+    Route::post('/','create');
+});
+
+  // Order
+Route::controller(OrderController::class)->middleware('auth:sanctum')->prefix('order')->group(function (){
+    Route::post('/','create');
+});
+
+//  Logout
+Route::group(['middleware'=>['auth:sanctum']], function () {
+    Route::post('/logout',[AuthController::class,'logout']);
 });

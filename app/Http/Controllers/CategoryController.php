@@ -58,4 +58,6 @@ class CategoryController extends Controller
         return $this->apiResponse($medicine,'this is your search result',200);
     }
 
+
+
 }
