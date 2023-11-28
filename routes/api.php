@@ -83,3 +83,4 @@ Route::controller(OrderController::class)->middleware('auth:sanctum')->prefix('o
 Route::group(['middleware'=>['auth:sanctum']], function () {
     Route::post('/logout',[AuthController::class,'logout']);
 });
+//test sodkfskdfjdfpew[fd
